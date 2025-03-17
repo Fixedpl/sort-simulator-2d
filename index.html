@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas</title>
+
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player-container {
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="player-container">
+        <button id="play" onclick="onPlay()">Play</button>
+        <button id="stop" onclick="onStop()">Stop</button>
+        <button id="prev" onclick="onPrev()">Prev</button>
+        <button id="next" onclick="onNext()">Next</button>
+        <button id="generate" onclick="onGenerate()">Generate</button>
+        <select id="sort-type">
+            <option value="bubble">BUBBLE SORT</option>
+            <option value="insertion">INSERTION SORT</option>
+            <option value="selection" selected>SELECTION SORT</option>
+        </select>
+    </div>
+    
+
+    <script src="util.js" defer></script>
+    <script src="rendering/canvas2.js" defer></script>
+    <script src="rendering/text2d.js" defer></script>
+    <script src="rendering/array-cells2d.js" defer></script>
+    <script src="rendering/array2d.js" defer></script>
+    <script src="rendering/array-splitter2d.js" defer></script>
+    <script src="animation.js" defer></script>
+    <script src="animation2d.js" defer></script>
+    <script src="array-trace.js" defer></script>
+    <script src="sorting.js" defer></script>
+    <script src="operation.js" defer></script>
+    <script src="array2d-operations.js" defer></script>
+    <script src="array2d-anim-factory.js" defer></script>
+    <script src="array2d-operations-anim.js" defer></script>
+    <script src="bubblesort2d.js" defer></script>
+    <script src="insertionsort2d.js" defer></script>
+    <script src="selectionsort2d.js" defer></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
