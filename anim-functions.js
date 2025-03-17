@@ -1,4 +1,20 @@
 
+class AnimationFunc {
+
+    constructor() {}
+
+    onUpdate(t, duration) {}
+
+}
+
+class EmptyAnimationFunc extends AnimationFunc {
+
+    constructor() {
+        super();
+    }
+
+}
+
 class MovementAnimationFunc extends AnimationFunc {
 
     constructor(pos, vec, tweenFunc) {

@@ -38,35 +38,35 @@ class BubbleSort2D extends Canvas2D {
 
         for (let trace of traces) {
 
-            if(trace.type == ArrayTraceType.INNER_LOOP_BOUNDARY_EVALUATION) {
+            if(trace.type == BubbleSortTraceType.INNER_LOOP_BOUNDARY_EVALUATION) {
                 if(splitterVisible === false) {
                     splitterVisible = true;
                     splitterIdx = trace.idx;
                     
-                    this.operationPlayer.push(new Arr2dShowSplitterAfterIdxAnim(this.arr2d, this.arrSplitter2D, trace.idx, this.animPlayer));
+                    this.operationPlayer.push(new SBShowSplitterAfterIdxAnim(this.arr2d, this.arrSplitter2D, trace.idx, this.animPlayer));
                 } else {
                     const splitterIdxFrom = splitterIdx;
                     const splitterIdxTo = trace.idx;
     
                     splitterIdx = splitterIdxTo;
     
-                    this.operationPlayer.push(new Arr2dMoveSplitterAfterIdx(this.arr2d, this.arrSplitter2D, splitterIdxFrom, splitterIdxTo,  this.animPlayer));
+                    this.operationPlayer.push(new SBMoveSplitterAfterIdxAnim(this.arr2d, this.arrSplitter2D, splitterIdxFrom, splitterIdxTo,  this.animPlayer));
                 }
             }
     
-            if (trace.type == ArrayTraceType.COMPARE_START) {
+            if (trace.type == BubbleSortTraceType.COMPARE_START) {
                 compareIdx1 = trace.idxs[0];
                 compareIdx2 = trace.idxs[1];
 
-                this.operationPlayer.push(new Arr2dCompareStartAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
+                this.operationPlayer.push(new SBCompareStartAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
             }
         
-            if (trace.type == ArrayTraceType.COMPARE_END) {
-                this.operationPlayer.push(new Arr2dCompareEndAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
+            if (trace.type == BubbleSortTraceType.COMPARE_END) {
+                this.operationPlayer.push(new SBCompareEndAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
             }
         
-            if (trace.type == ArrayTraceType.SWAP) {
-                this.operationPlayer.push(new Arr2dSwapAnim(this.arr2d, trace.idxs[0], trace.idxs[1], this.animPlayer));
+            if (trace.type == BubbleSortTraceType.SWAP) {
+                this.operationPlayer.push(new SBSwapAnim(this.arr2d, trace.idxs[0], trace.idxs[1], this.animPlayer));
             }
 
         }

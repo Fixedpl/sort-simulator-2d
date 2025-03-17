@@ -1,5 +1,5 @@
 
-class Arr2dAnimFactory {
+class AnimFactory {
 
     constructor() {
         this.animTime = 300;

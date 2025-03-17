@@ -35,30 +35,30 @@ class InsertionSort2D extends Canvas2D {
 
         for(let trace of traces) {
 
-            if (trace.type == ArrayTraceType.CHOOSE_KEY) {
+            if (trace.type == InsertionSortTraceType.CHOOSE_KEY) {
                 keyIdx = trace.idx;
-                this.operationPlayer.push(new Arr2dChooseKeyAnim(this.arrWithKey, trace.idx, this.animPlayer));
+                this.operationPlayer.push(new SIChooseKeyAnim(this.arrWithKey, trace.idx, this.animPlayer));
             }
 
-            if (trace.type == ArrayTraceType.COMPARE_TO_KEY_START) {
+            if (trace.type == InsertionSortTraceType.COMPARE_TO_KEY_START) {
                 compareToKeyIdx = trace.idx;
-                this.operationPlayer.push(new Arr2dCompareToKeyStartAnim(this.arrWithKey, trace.idx, this.animPlayer));
+                this.operationPlayer.push(new SICompareToKeyStartAnim(this.arrWithKey, trace.idx, this.animPlayer));
             }
 
-            if (trace.type == ArrayTraceType.COMPARE_TO_KEY_END) {
-                this.operationPlayer.push(new Arr2dCompareToKeyEndAnim(this.arrWithKey, compareToKeyIdx, this.animPlayer));
+            if (trace.type == InsertionSortTraceType.COMPARE_TO_KEY_END) {
+                this.operationPlayer.push(new SICompareToKeyEndAnim(this.arrWithKey, compareToKeyIdx, this.animPlayer));
                 compareToKeyIdx = null;
             }
 
-            if (trace.type == ArrayTraceType.MOVE_TO_RIGHT) {
+            if (trace.type == InsertionSortTraceType.MOVE_TO_RIGHT) {
                 if(trace.idx == compareToKeyIdx) {
                     compareToKeyIdx = trace.idx + 1;
                 }
-                this.operationPlayer.push(new Arr2dMoveToRightAnim(this.arrWithKey, trace.idx, this.animPlayer));
+                this.operationPlayer.push(new SIMoveToRightAnim(this.arrWithKey, trace.idx, this.animPlayer));
             }
 
-            if (trace.type == ArrayTraceType.PLACE_KEY) {
-                this.operationPlayer.push(new Arr2dPlaceKeyAnim(this.arrWithKey, keyIdx, trace.idx, this.animPlayer));
+            if (trace.type == InsertionSortTraceType.PLACE_KEY) {
+                this.operationPlayer.push(new SIPlaceKeyAnim(this.arrWithKey, keyIdx, trace.idx, this.animPlayer));
                 keyIdx = null;
             }
 

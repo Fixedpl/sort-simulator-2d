@@ -37,41 +37,41 @@ class SelectionSort2D extends Canvas2D {
 
         for (let trace of traces) {
 
-            if (trace.type == ArrayTraceType.MIN_INDEX_CHOOSE) {
+            if (trace.type == SelectionSortTraceType.MIN_INDEX_CHOOSE) {
                 if(splitterIdx == null) {
-                    this.operationPlayer.push(new Arr2dShowSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, trace.idx, this.animPlayer));
+                    this.operationPlayer.push(new SSShowSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, trace.idx, this.animPlayer));
                 } else {
-                    this.operationPlayer.push(new Arr2dMoveSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, splitterIdx, trace.idx, this.animPlayer));
+                    this.operationPlayer.push(new SSMoveSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, splitterIdx, trace.idx, this.animPlayer));
                 }
                 splitterIdx = trace.idx;
                 minIndex = trace.idx;
                 
-                this.operationPlayer.push(new Arr2dMinIndexChooseAnim(this.arr2d, minIndex, this.animPlayer));
+                this.operationPlayer.push(new SSMinIndexChooseAnim(this.arr2d, minIndex, this.animPlayer));
             }
             
-            if (trace.type == ArrayTraceType.MIN_INDEX_CHANGE) {
-                this.operationPlayer.push(new Arr2dMinIndexChangeAnim(this.arr2d, minIndex, trace.idx, this.animPlayer));
+            if (trace.type == SelectionSortTraceType.MIN_INDEX_CHANGE) {
+                this.operationPlayer.push(new SSMinIndexChangeAnim(this.arr2d, minIndex, trace.idx, this.animPlayer));
                 minIndex = trace.idx;
             }
 
-            if (trace.type == ArrayTraceType.MIN_INDEX_RELEASE) {
-                this.operationPlayer.push(new Arr2dMinIndexReleaseAnim(this.arr2d, minIndex, this.animPlayer));
+            if (trace.type == SelectionSortTraceType.MIN_INDEX_RELEASE) {
+                this.operationPlayer.push(new SSMinIndexReleaseAnim(this.arr2d, minIndex, this.animPlayer));
                 minIndex = null;
             }
 
-            if (trace.type == ArrayTraceType.COMPARE_START) {
+            if (trace.type == SelectionSortTraceType.COMPARE_START) {
                 compareIdx1 = trace.idxs[0];
                 compareIdx2 = trace.idxs[1];
 
-                this.operationPlayer.push(new Arr2dCompareStartAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
+                this.operationPlayer.push(new SSCompareStartAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
             }
         
-            if (trace.type == ArrayTraceType.COMPARE_END) {
-                this.operationPlayer.push(new Arr2dCompareEndAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
+            if (trace.type == SelectionSortTraceType.COMPARE_END) {
+                this.operationPlayer.push(new SSCompareEndAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
             }
         
-            if (trace.type == ArrayTraceType.SWAP) {
-                this.operationPlayer.push(new Arr2dSwapAnim(this.arr2d, trace.idxs[0], trace.idxs[1], this.animPlayer));
+            if (trace.type == SelectionSortTraceType.SWAP) {
+                this.operationPlayer.push(new SSSwapAnim(this.arr2d, trace.idxs[0], trace.idxs[1], this.animPlayer));
             }
 
         }
