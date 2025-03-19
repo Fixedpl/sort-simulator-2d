@@ -12,8 +12,10 @@ class InsertionSort2D extends Canvas2D {
         
         this.operationPlayer = new OperationPlayer();
 
+        const CELL_GAP = 40;
+
         this.arrWithKey = {
-            arr2d: new Array2D(trace.arr, pos, this.ctx),
+            arr2d: new Array2D(trace.arr, pos, CELL_GAP, this.ctx),
             key: null
         };
 

@@ -9,7 +9,7 @@ class SSShowSplitterBeforeIdxAnim extends SSShowSplitterBeforeIdx {
     }
 
     execute(onFinishCallback) {
-        this.splitter.pos = this.arr.posAtIdxStart(this.idx);
+        this.splitter.pos = this.arr.posAtGapCenterBeforeIdx(this.idx);
 
         const anims = [];
 
@@ -26,7 +26,7 @@ class SSShowSplitterBeforeIdxAnim extends SSShowSplitterBeforeIdx {
     skip() {
         this.splitter.col[3] = 1.0;
 
-        this.splitter.pos = this.arr.posAtIdxStart(this.idx);
+        this.splitter.pos = this.arr.posAtGapCenterBeforeIdx(this.idx);
     }
 
 }
@@ -41,7 +41,7 @@ class SSMoveSplitterBeforeIdxAnim extends SSMoveSplitterBeforeIdx {
     }
 
     execute(onFinishCallback) {
-        const changeVec = vec2Subtract(this.arr.posAtIdxStart(this.idxTo), this.arr.posAtIdxStart(this.idxFrom));
+        const changeVec = vec2Subtract(this.arr.posAtGapCenterBeforeIdx(this.idxTo), this.arr.posAtGapCenterBeforeIdx(this.idxFrom));
 
         const anims = [];
 
@@ -51,11 +51,11 @@ class SSMoveSplitterBeforeIdxAnim extends SSMoveSplitterBeforeIdx {
     }
 
     reverse() {
-        this.splitter.pos = this.arr.posAtIdxStart(this.idxFrom);
+        this.splitter.pos = this.arr.posAtGapCenterBeforeIdx(this.idxFrom);
     }
 
     skip() {
-        this.splitter.pos = this.arr.posAtIdxStart(this.idxTo);
+        this.splitter.pos = this.arr.posAtGapCenterBeforeIdx(this.idxTo);
     }
 
 }
@@ -261,8 +261,8 @@ class SSSwapAnim extends SSSwap {
 
         const anims = [];
 
-        const slot1Pos = this.arr.posAtIdx(this.idx1);
-        const slot2Pos = this.arr.posAtIdx(this.idx2);
+        const slot1Pos = this.arr.posAtCellCenterIdx(this.idx1);
+        const slot2Pos = this.arr.posAtCellCenterIdx(this.idx2);
 
         const xDiff = slot2Pos[0] - slot1Pos[0];
 
@@ -287,15 +287,15 @@ class SSSwapAnim extends SSSwap {
     }
 
     reverse() {
-        this.arr.elemAtIdx(this.idx1).pos = this.arr.posAtIdx(this.idx2);
-        this.arr.elemAtIdx(this.idx2).pos = this.arr.posAtIdx(this.idx1);
+        this.arr.elemAtIdx(this.idx1).pos = this.arr.posAtCellCenterIdx(this.idx2);
+        this.arr.elemAtIdx(this.idx2).pos = this.arr.posAtCellCenterIdx(this.idx1);
 
         this.arr.swap(this.idx1, this.idx2);
     }
 
     skip() {
-        this.arr.elemAtIdx(this.idx1).pos = this.arr.posAtIdx(this.idx2);
-        this.arr.elemAtIdx(this.idx2).pos = this.arr.posAtIdx(this.idx1);
+        this.arr.elemAtIdx(this.idx1).pos = this.arr.posAtCellCenterIdx(this.idx2);
+        this.arr.elemAtIdx(this.idx2).pos = this.arr.posAtCellCenterIdx(this.idx1);
 
         this.arr.swap(this.idx1, this.idx2);
     }

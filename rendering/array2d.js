@@ -1,25 +1,28 @@
 
-class Array2D {
+class Array2D extends Object2D {
 
-    constructor(arr, pos, ctx) {
+    constructor(arr, pos, cellGap, ctx) {
+        super();
         this.pos = pos;
         this.ctx = ctx;
 
-        const ARRAY_WIDTH = 110;
+        const CELL_WIDTH = 110;
 
-        this.cells = new ArrayCells2D(arr.length, ARRAY_WIDTH, this.pos, this.ctx);
+        this.cells = new ArrayCells2D(arr.length, CELL_WIDTH, [0, 0], cellGap, this.ctx);
+        this.cells.parent = this;
 
         this.elems = new Array(arr.length);
         for(let i = 0; i < arr.length; i++) {
             this.elems[i] = new Text2D(
                 arr[i].toString(), 
-                this.cells.posAtIdx(i), 
+                this.cells.posAtCellCenterIdx(i), 
                 COLORS_FACTORY.BLACK, 
                 ctx
             );
+            this.elems[i].parent = this;
         }
 
-        this.height = ARRAY_WIDTH;
+        this.height = CELL_WIDTH;
     }
     
     removeElemAtIdx(idx) {
@@ -50,16 +53,20 @@ class Array2D {
         return this.cells.elemAtIdx(idx);
     }
 
-    posAtIdxEnd(idx) {
-        return vec2Add(this.cells.posAtIdx(idx), [(this.cells.width / 2) + (this.cells.CELL_GAP / 2), 0]);
+    posAtCellCenterIdx(idx) {
+        return this.cells.posAtCellCenterIdx(idx);
     }
 
-    posAtIdxStart(idx) {
-        return vec2Add(this.cells.posAtIdx(idx), [-1.0 * ((this.cells.width / 2) + (this.cells.CELL_GAP / 2)), 0]);
+    posAtGapCenterBeforeIdx(idx) {
+        return this.cells.posAtGapCenterBeforeIdx(idx);
     }
 
-    posAtIdx(idx) {
-        return this.cells.posAtIdx(idx);
+    posAtGapCenterAfterIdx(idx) {
+        return this.cells.posAtGapCenterAfterIdx(idx);
+    }
+
+    absPosAtGapCenterAfterIdx(idx) {
+        return this.cells.absPosAtGapCenterAfterIdx(idx);
     }
 
     swap(idx1, idx2) {

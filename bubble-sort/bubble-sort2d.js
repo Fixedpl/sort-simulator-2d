@@ -12,7 +12,9 @@ class BubbleSort2D extends Canvas2D {
         
         this.operationPlayer = new OperationPlayer();
 
-        this.arr2d = new Array2D(trace.arr, pos, this.ctx);
+        const CELL_GAP = 40;
+
+        this.arr2d = new Array2D(trace.arr, pos, CELL_GAP, this.ctx);
 
         let RED = COLORS_FACTORY.RED;
         RED[3] = 0.0;

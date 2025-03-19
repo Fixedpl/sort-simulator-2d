@@ -126,8 +126,8 @@ class SIMoveToRightAnim extends SIMoveToRight {
     }
 
     execute(onFinishCallback) {
-        const pos = this.arrWithKey.arr2d.posAtIdx(this.idx);
-        const posToRight = this.arrWithKey.arr2d.posAtIdx(this.idx + 1);
+        const pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
+        const posToRight = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx + 1);
 
         const changeVec = [posToRight[0] - pos[0], 0];
 
@@ -143,11 +143,11 @@ class SIMoveToRightAnim extends SIMoveToRight {
     reverse() {
         this.arrWithKey.arr2d.moveElemAtIdxLeft(this.idx + 1);
 
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtIdx(this.idx);
+        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
     }
 
     skip() {
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtIdx(this.idx + 1);
+        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx + 1);
 
         this.arrWithKey.arr2d.moveElemAtIdxRight(this.idx);
     }
@@ -164,9 +164,9 @@ class SIPlaceKeyAnim extends SIPlaceKey {
     }
 
     execute(onFinishCallback) {
-        const keyPos = vec2Add(this.arrWithKey.arr2d.posAtIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
+        const keyPos = vec2Add(this.arrWithKey.arr2d.posAtCellCenterIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
 
-        const changeVec = vec2Subtract(this.arrWithKey.arr2d.posAtIdx(this.idx), keyPos);
+        const changeVec = vec2Subtract(this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx), keyPos);
 
         const anims = [];
 
@@ -182,14 +182,14 @@ class SIPlaceKeyAnim extends SIPlaceKey {
     reverse() {
         this.arrWithKey.key = this.arrWithKey.arr2d.removeElemAtIdx(this.idx);
 
-        this.arrWithKey.key.pos = vec2Add(this.arrWithKey.arr2d.posAtIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
+        this.arrWithKey.key.pos = vec2Add(this.arrWithKey.arr2d.posAtCellCenterIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
     }
 
     skip() {
         this.arrWithKey.arr2d.putElemAtIdx(this.arrWithKey.key, this.idx);
         this.arrWithKey.key = null;
 
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtIdx(this.idx);
+        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
     }
 
 }
