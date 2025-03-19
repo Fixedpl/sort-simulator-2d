@@ -45,7 +45,7 @@ class SSMoveSplitterBeforeIdxAnim extends SSMoveSplitterBeforeIdx {
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.splitter.pos, changeVec));
+        anims.push(this.animFactory.moveByVec(this.splitter, changeVec));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -70,11 +70,11 @@ class SSMinIndexChooseAnim extends SSMinIndexChoose {
     }
 
     execute(onFinishCallback) {
-        let col = this.arr.cellAtIdx(this.idx).col;
+        let obj = this.arr.cellAtIdx(this.idx);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColor(col, COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColor(obj, COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -104,14 +104,14 @@ class SSMinIndexChangeAnim extends SSMinIndexChange {
     }
 
     execute(onFinishCallback) {
-        let colFrom = this.arr.cellAtIdx(this.idxFrom).col;
-        let colTo = this.arr.cellAtIdx(this.idxTo).col;
+        let objFrom = this.arr.cellAtIdx(this.idxFrom);
+        let objTo = this.arr.cellAtIdx(this.idxTo).col;
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColor(colFrom, COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.animFactory.changeColor(objFrom, COLORS.YELLOW, COLORS.BLACK));
         anims.push(this.animFactory.pause());
-        anims.push(this.animFactory.changeColor(colTo, COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColor(objTo, COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -145,11 +145,11 @@ class SSMinIndexReleaseAnim extends SSMinIndexRelease {
     }
 
     execute(onFinishCallback) {
-        let col = this.arr.cellAtIdx(this.idx).col;
+        const obj = this.arr.cellAtIdx(this.idx);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColor(col, COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.animFactory.changeColor(obj, COLORS.YELLOW, COLORS.BLACK));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -178,12 +178,12 @@ class SSCompareStartAnim extends SSCompareStart {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arr.elemAtIdx(this.idx1).col;
-        const col2 = this.arr.elemAtIdx(this.idx2).col;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -217,12 +217,12 @@ class SSCompareEndAnim extends SSCompareEnd {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arr.elemAtIdx(this.idx1).col;
-        const col2 = this.arr.elemAtIdx(this.idx2).col;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.YELLOW, COLORS.BLACK));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -256,8 +256,8 @@ class SSSwapAnim extends SSSwap {
     }
 
     execute(onFinishCallback) {
-        const pos1 = this.arr.elemAtIdx(this.idx1).pos;
-        const pos2 = this.arr.elemAtIdx(this.idx2).pos;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
@@ -269,16 +269,16 @@ class SSSwapAnim extends SSSwap {
         const arrHeight = this.arr.height;
 
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [0, -arrHeight]),
-            this.animFactory.moveByVec(pos2, [0, arrHeight])
+            this.animFactory.moveByVec(obj1, [0, -arrHeight]),
+            this.animFactory.moveByVec(obj2, [0, arrHeight])
         ]));
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [xDiff, 0]),
-            this.animFactory.moveByVec(pos2, [-xDiff, 0])
+            this.animFactory.moveByVec(obj1, [xDiff, 0]),
+            this.animFactory.moveByVec(obj2, [-xDiff, 0])
         ]))
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [0, arrHeight]),
-            this.animFactory.moveByVec(pos2, [0, -arrHeight])
+            this.animFactory.moveByVec(obj1, [0, arrHeight]),
+            this.animFactory.moveByVec(obj2, [0, -arrHeight])
         ]));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));

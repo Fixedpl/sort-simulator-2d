@@ -15,7 +15,7 @@ class SIChooseKeyAnim extends SIChooseKey {
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key.pos, changeVec));
+        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, changeVec));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback))
     }
@@ -49,12 +49,12 @@ class SICompareToKeyStartAnim extends SICompareToKeyStart {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        const obj1 = this.arrWithKey.arr2d.elemAtIdx(this.idx);
+        const obj2 = this.arrWithKey.key;
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -88,12 +88,12 @@ class SICompareToKeyEndAnim extends SICompareToKeyEnd {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        const obj1 = this.arrWithKey.arr2d.elemAtIdx(this.idx);
+        const obj2 = this.arrWithKey.key;
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.YELLOW, COLORS.BLACK));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -133,7 +133,7 @@ class SIMoveToRightAnim extends SIMoveToRight {
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.arr2d.elemAtIdx(this.idx).pos, changeVec));
+        anims.push(this.animFactory.moveByVec(this.arrWithKey.arr2d.elemAtIdx(this.idx), changeVec));
 
         this.arrWithKey.arr2d.moveElemAtIdxRight(this.idx);
 
@@ -170,8 +170,8 @@ class SIPlaceKeyAnim extends SIPlaceKey {
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key.pos, [changeVec[0], 0]));
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key.pos, [0, changeVec[1]]));
+        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, [changeVec[0], 0]));
+        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, [0, changeVec[1]]));
 
         this.arrWithKey.arr2d.putElemAtIdx(this.arrWithKey.key, this.idx);
         this.arrWithKey.key = null;

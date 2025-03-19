@@ -2,22 +2,27 @@
 class ArrayCells2D {
 
     constructor(length, width, pos, ctx) {
-        this.length = length;
         this.width = width;
         this.pos = pos;
         this.ctx = ctx;
 
         this.cells = new Array(length);
 
-        this.CELL_GAP = 40;
+        this.CELL_GAP = 10;
 
         this.init();
+    }
+
+    set col(col) {
+        for(let i = 0; i < this.cells.length; i++) {
+            this.cells[i].col = col;
+        }
     }
 
     init() {
         let shift = this.width / 2;
 
-        for (let i = 0; i < this.length; i++) {
+        for (let i = 0; i < this.cells.length; i++) {
 
             this.cells[i] = {
                 pos: [shift, 0],

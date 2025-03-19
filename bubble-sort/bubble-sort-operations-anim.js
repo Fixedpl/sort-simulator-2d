@@ -45,7 +45,7 @@ class SBMoveSplitterAfterIdxAnim extends SBMoveSplitterAfterIdx {
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.splitter.pos, changeVec));
+        anims.push(this.animFactory.moveByVec(this.splitter, changeVec));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -70,12 +70,12 @@ class SBCompareStartAnim extends SBCompareStart {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arr.elemAtIdx(this.idx1).col;
-        const col2 = this.arr.elemAtIdx(this.idx2).col;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -109,12 +109,12 @@ class SBCompareEndAnim extends SBCompareEnd {
     }
 
     execute(onFinishCallback) {
-        const col1 = this.arr.elemAtIdx(this.idx1).col;
-        const col2 = this.arr.elemAtIdx(this.idx2).col;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([col1, col2], COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.YELLOW, COLORS.BLACK));
         anims.push(this.animFactory.pause());
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
@@ -148,8 +148,8 @@ class SBSwapAnim extends SBSwap {
     }
 
     execute(onFinishCallback) {
-        const pos1 = this.arr.elemAtIdx(this.idx1).pos;
-        const pos2 = this.arr.elemAtIdx(this.idx2).pos;
+        const obj1 = this.arr.elemAtIdx(this.idx1);
+        const obj2 = this.arr.elemAtIdx(this.idx2);
 
         const anims = [];
 
@@ -161,16 +161,16 @@ class SBSwapAnim extends SBSwap {
         const arrHeight = this.arr.height;
 
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [0, -arrHeight]),
-            this.animFactory.moveByVec(pos2, [0, arrHeight])
+            this.animFactory.moveByVec(obj1, [0, -arrHeight]),
+            this.animFactory.moveByVec(obj2, [0, arrHeight])
         ]));
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [xDiff, 0]),
-            this.animFactory.moveByVec(pos2, [-xDiff, 0])
+            this.animFactory.moveByVec(obj1, [xDiff, 0]),
+            this.animFactory.moveByVec(obj2, [-xDiff, 0])
         ]))
         anims.push(new AnimationSync([
-            this.animFactory.moveByVec(pos1, [0, arrHeight]),
-            this.animFactory.moveByVec(pos2, [0, -arrHeight])
+            this.animFactory.moveByVec(obj1, [0, arrHeight]),
+            this.animFactory.moveByVec(obj2, [0, -arrHeight])
         ]));
 
         this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));

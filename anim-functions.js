@@ -17,9 +17,9 @@ class EmptyAnimationFunc extends AnimationFunc {
 
 class MovementAnimationFunc extends AnimationFunc {
 
-    constructor(pos, vec, tweenFunc) {
+    constructor(obj, vec, tweenFunc) {
         super();
-        this.pos = pos;
+        this.obj = obj;
         this.vec = vec;
         this.tweenFunc = tweenFunc;
 
@@ -31,8 +31,7 @@ class MovementAnimationFunc extends AnimationFunc {
 
         const vecDt = vec2Subtract(vecAccNew, this.vecAcc);
 
-        this.pos[0] += vecDt[0];
-        this.pos[1] += vecDt[1];
+        this.obj.pos = vec2Add(this.obj.pos, vecDt);
 
         this.vecAcc = vecAccNew;
     }
@@ -41,9 +40,9 @@ class MovementAnimationFunc extends AnimationFunc {
 
 class ColorAnimationFunc extends AnimationFunc {
     
-    constructor(col, colStart, colEnd, tweenFunc) {
+    constructor(obj, colStart, colEnd, tweenFunc) {
         super();
-        this.col = col;
+        this.obj = obj;
         this.colStart = colStart;
         this.colEnd = colEnd;
         this.tweenFunc = tweenFunc;
@@ -54,16 +53,16 @@ class ColorAnimationFunc extends AnimationFunc {
 
         const newCol = vec4Add(vec4Multiply(this.colStart, (1 - multiplier)), vec4Multiply(this.colEnd, multiplier));
 
-        vec4CopyValues(this.col, newCol);
+        vec4CopyValues(this.obj.col, newCol);
     }
 
 }
 
 class AlphaAnimationFunc extends AnimationFunc {
     
-    constructor(col, alphaStart, alphaEnd, tweenFunc) {
+    constructor(obj, alphaStart, alphaEnd, tweenFunc) {
         super();
-        this.col = col;
+        this.obj = obj;
         this.alphaStart = alphaStart;
         this.alphaEnd = alphaEnd;
         this.tweenFunc = tweenFunc;
@@ -74,7 +73,7 @@ class AlphaAnimationFunc extends AnimationFunc {
 
         const newAlpha = this.alphaStart * (1 - multiplier) + (this.alphaEnd * multiplier);
 
-        this.col[3] = newAlpha;
+        this.obj.col[3] = newAlpha;
     }
 
 }
