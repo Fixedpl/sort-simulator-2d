@@ -65,6 +65,10 @@ class Array2D extends Object2D {
         return this.cells.posAtGapCenterAfterIdx(idx);
     }
 
+    absPosAtGapCenterBeforeIdx(idx) {
+        return this.cells.absPosAtGapCenterBeforeIdx(idx);
+    }
+
     absPosAtGapCenterAfterIdx(idx) {
         return this.cells.absPosAtGapCenterAfterIdx(idx);
     }

@@ -5,76 +5,21 @@ class SelectionSort2D extends Canvas2D {
         super(1200, 600, COLORS_FACTORY.LIGHTBLUE);
         this.ctx.font = '80px Arial';
 
-        this.pos = pos;
+        this.canvasScene = new CanvasScene(this.ctx);
+
+        const traceProcessors = trace.traces.map(tr => new SSTraceProcessor(this.canvasScene, tr));
+
+        this.operationSource = new TraceOperationSource(traceProcessors);
+
+        this.simulation = new Simulation(this.operationSource);
         
-        this.animPlayer = new AnimationPlayer();
-        this.animPlayer.play();
-        
-        this.operationPlayer = new OperationPlayer();
+        const CELL_GAP = 40;
+        this.arr2d = new Array2D(trace.arr, pos, CELL_GAP, this.ctx);
 
-        this.arr2d = new Array2D(trace.arr, pos, this.ctx);
-
-        let RED = COLORS_FACTORY.RED;
-        RED[3] = 0.0;
-
-        this.arrSplitter2D = new ArraySplitter2D([110, 110], RED, this.arr2d.height * 1.5, this.ctx);
-
-        this.traceToOperations(trace.traces);
+        this.canvasScene.drawables.set('array', this.arr2d);
     }
 
     onUpdate(dt) {
-        this.arr2d.draw();
-        this.arrSplitter2D.draw();
-
-        this.animPlayer.onUpdate(dt);
-    }
-
-    traceToOperations(traces) {
-        let compareIdx1 = 0;
-        let compareIdx2 = 0;
-        let minIndex = null;
-        let splitterIdx = null;
-
-        for (let trace of traces) {
-
-            if (trace.type == SelectionSortTraceType.MIN_INDEX_CHOOSE) {
-                if(splitterIdx == null) {
-                    this.operationPlayer.push(new SSShowSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, trace.idx, this.animPlayer));
-                } else {
-                    this.operationPlayer.push(new SSMoveSplitterBeforeIdxAnim(this.arr2d, this.arrSplitter2D, splitterIdx, trace.idx, this.animPlayer));
-                }
-                splitterIdx = trace.idx;
-                minIndex = trace.idx;
-                
-                this.operationPlayer.push(new SSMinIndexChooseAnim(this.arr2d, minIndex, this.animPlayer));
-            }
-            
-            if (trace.type == SelectionSortTraceType.MIN_INDEX_CHANGE) {
-                this.operationPlayer.push(new SSMinIndexChangeAnim(this.arr2d, minIndex, trace.idx, this.animPlayer));
-                minIndex = trace.idx;
-            }
-
-            if (trace.type == SelectionSortTraceType.MIN_INDEX_RELEASE) {
-                this.operationPlayer.push(new SSMinIndexReleaseAnim(this.arr2d, minIndex, this.animPlayer));
-                minIndex = null;
-            }
-
-            if (trace.type == SelectionSortTraceType.COMPARE_START) {
-                compareIdx1 = trace.idxs[0];
-                compareIdx2 = trace.idxs[1];
-
-                this.operationPlayer.push(new SSCompareStartAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
-            }
-        
-            if (trace.type == SelectionSortTraceType.COMPARE_END) {
-                this.operationPlayer.push(new SSCompareEndAnim(this.arr2d, compareIdx1, compareIdx2, this.animPlayer));
-            }
-        
-            if (trace.type == SelectionSortTraceType.SWAP) {
-                this.operationPlayer.push(new SSSwapAnim(this.arr2d, trace.idxs[0], trace.idxs[1], this.animPlayer));
-            }
-
-        }
-
+        this.canvasScene.onUpdate(dt);
     }
 }

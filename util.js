@@ -96,3 +96,13 @@ const COLORS_FACTORY = {
         return [255, 0, 0, 1.0];
     }
 }
+
+function alpha0(col) {
+    col[3] = 0.0;
+    return col;
+}
+
+function alpha1(col) {
+    col[3] = 1.0;
+    return col;
+}

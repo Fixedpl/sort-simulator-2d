@@ -85,6 +85,10 @@ class ArrayCells2D extends Object2D {
         return vec2Add(this.cells[idx].pos, [this.width + (this.gap / 2), -this.width / 2]);
     }
     
+    absPosAtGapCenterBeforeIdx(idx) {
+        return vec2Add(this.cells[idx].absPos, [-this.gap / 2, -this.width / 2]);
+    }
+
     absPosAtGapCenterAfterIdx(idx) {
         return vec2Add(this.cells[idx].absPos, [this.width + (this.gap / 2), -this.width / 2]);
     }

@@ -24,7 +24,7 @@ function setupChosenSort() {
     canvas2d.run();
     document.body.appendChild(canvas2d.htmlObj());
 
-    canvas2d.operationPlayer.playingObservable().subscribe((val) => {
+    canvas2d.simulation.playingObs.subscribe((val) => {
         document.getElementById('next').disabled = val;
         document.getElementById('prev').disabled = val;
         document.getElementById('generate').disabled = val;
@@ -32,19 +32,19 @@ function setupChosenSort() {
 }
 
 function onPlay() {
-    canvas2d.operationPlayer.play();
+    canvas2d.simulation.play();
 }
 
-function onStop() {
-    canvas2d.operationPlayer.stop();
+function onPause() {
+    canvas2d.simulation.pause();
 }
 
 function onPrev() {
-    canvas2d.operationPlayer.prev();
+    canvas2d.simulation.reverse();
 }
 
 function onNext() {
-    canvas2d.operationPlayer.next();
+    canvas2d.simulation.skip();
 }
 
 function onGenerate() {

@@ -30,14 +30,14 @@
 
     <div class="player-container">
         <button id="play" onclick="onPlay()">Play</button>
-        <button id="stop" onclick="onStop()">Stop</button>
+        <button id="pause" onclick="onPause()">Pause</button>
         <button id="prev" onclick="onPrev()">Prev</button>
         <button id="next" onclick="onNext()">Next</button>
         <button id="generate" onclick="onGenerate()">Generate</button>
         <select id="sort-type">
-            <option value="bubble" selected>BUBBLE SORT</option>
+            <option value="bubble">BUBBLE SORT</option>
             <option value="insertion">INSERTION SORT</option>
-            <option value="selection">SELECTION SORT</option>
+            <option value="selection" selected>SELECTION SORT</option>
         </select>
     </div>
     
@@ -48,6 +48,11 @@
     <script src="anim-functions.js" defer></script>
     <script src="anim-factory.js" defer></script>
     <script src="operation.js" defer></script>
+    <script src="simulation.js" defer></script>
+    <script src="trace-processor.js" defer></script>
+    <script src="trace-operation-source.js" defer></script>
+    <script src="scene.js" defer></script>
+    <script src="canvas-scene.js" defer></script>
 
     <script src="rendering/canvas2d.js" defer></script>
     <script src="rendering/object2d.js" defer></script>
@@ -57,18 +62,18 @@
     <script src="rendering/array-splitter2d.js" defer></script>
 
     <script src="bubble-sort/bubble-sort-trace.js" defer></script>
-    <script src="bubble-sort/bubble-sort-operations.js" defer></script>
     <script src="bubble-sort/bubble-sort-operations-anim.js" defer></script>
+    <script src="bubble-sort/bubble-sort-trace-processor.js" defer></script>
     <script src="bubble-sort/bubble-sort2d.js" defer></script>
 
     <script src="insertion-sort/insertion-sort-trace.js" defer></script>
-    <script src="insertion-sort/insertion-sort-operations.js" defer></script>
     <script src="insertion-sort/insertion-sort-operations-anim.js" defer></script>
+    <script src="insertion-sort/insertion-sort-trace-processor.js" defer></script>
     <script src="insertion-sort/insertion-sort2d.js" defer></script>
 
     <script src="selection-sort/selection-sort-trace.js" defer></script>
-    <script src="selection-sort/selection-sort-operations.js" defer></script>
     <script src="selection-sort/selection-sort-operations-anim.js" defer></script>
+    <script src="selection-sort/selection-sort-trace-processor.js" defer></script>
     <script src="selection-sort/selection-sort2d.js" defer></script>
 
     <script src="script.js" defer></script>

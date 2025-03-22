@@ -1,195 +1,251 @@
 
-class SIChooseKeyAnim extends SIChooseKey {
+class SIChooseKeyAnim extends Operation {
 
-    constructor(arrWithKey, idx, animPlayer) {
-        super(arrWithKey, idx);
-        this.animPlayer = animPlayer;
+    constructor(scene, idx) {
+        super();
 
-        this.animFactory = new AnimFactory();
+        this.scene = scene;
+
+        this.idx = idx;
     }
 
     execute(onFinishCallback) {
-        const changeVec = [0, -this.arrWithKey.arr2d.height * 2];
+        const array = this.scene.drawables.get('array');
 
-        this.arrWithKey.key = this.arrWithKey.arr2d.removeElemAtIdx(this.idx);
+        const key = array.removeElemAtIdx(this.idx);
+        this.scene.drawables.set('key', key);
+        this.scene.data.set('keyIdx', this.idx);
+        
+        const changeVec = [0, -array.height * 2];
 
         const anims = [];
+        anims.push(this.scene.animFactory.moveByVec(key, changeVec));
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, changeVec));
-
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback))
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback))
     }
 
     reverse() {
-        const newY = this.arrWithKey.key.pos[1] + this.arrWithKey.arr2d.height * 2;
+        const array = this.scene.drawables.get('array');
+        const key = this.scene.drawables.get('key');
 
-        this.arrWithKey.key.pos[1] = newY;
+        const newY = key.pos[1] + array.height * 2;
 
-        this.arrWithKey.arr2d.putElemAtIdx(this.arrWithKey.key, this.idx);
-        this.arrWithKey.key = null;
+        key.pos[1] = newY;
+
+        array.putElemAtIdx(key, this.idx);
+        
+        this.scene.drawables.delete('key');
+        this.scene.data.delete('keyIdx');
     }
 
     skip() {
-        this.arrWithKey.key = this.arrWithKey.arr2d.removeElemAtIdx(this.idx);
+        const array = this.scene.drawables.get('array');
 
-        const newY = this.arrWithKey.key.pos[1] - this.arrWithKey.arr2d.height * 2;
+        const key = array.removeElemAtIdx(this.idx);
+        this.scene.drawables.set('key', key);
+        this.scene.data.set('keyIdx', this.idx);
 
-        this.arrWithKey.key.pos[1] = newY;
+        const newY = key.pos[1] - array.height * 2;
+
+        key.pos[1] = newY;
     }
 
 }
 
-class SICompareToKeyStartAnim extends SICompareToKeyStart {
+class SICompareToKeyStartAnim extends Operation {
 
-    constructor(arrWithKey, idx, animPlayer) {
-        super(arrWithKey, idx);
-        this.animPlayer = animPlayer;
+    constructor(scene, idx) {
+        super();
+        
+        this.scene = scene;
 
-        this.animFactory = new AnimFactory();
+        this.idx = idx;
     }
 
     execute(onFinishCallback) {
-        const obj1 = this.arrWithKey.arr2d.elemAtIdx(this.idx);
-        const obj2 = this.arrWithKey.key;
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.idx);
+        const key = this.scene.drawables.get('key');
+
+        this.scene.data.set('compareIdx', this.idx);
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
-        anims.push(this.animFactory.pause());
+        anims.push(this.scene.animFactory.changeColorSimultaneously([compared, key], COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.scene.animFactory.pause());
 
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.idx);
+        const key = this.scene.drawables.get('key');
 
-        vec4CopyValues(col1, COLORS.BLACK);
-        vec4CopyValues(col2, COLORS.BLACK);
+        vec4CopyValues(compared.col, COLORS.BLACK);
+        vec4CopyValues(key.col, COLORS.BLACK);
     }
 
     skip() {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.idx);
+        const key = this.scene.drawables.get('key');
 
-        vec4CopyValues(col1, COLORS.YELLOW);
-        vec4CopyValues(col2, COLORS.YELLOW);
+        this.scene.data.set('compareIdx', this.idx);
+
+        vec4CopyValues(compared.col, COLORS.YELLOW);
+        vec4CopyValues(key.col, COLORS.YELLOW);
     }
 
 }
 
-class SICompareToKeyEndAnim extends SICompareToKeyEnd {
+class SICompareToKeyEndAnim extends Operation {
 
-    constructor(arrWithKey, idx, animPlayer) {
-        super(arrWithKey, idx);
-        this.animPlayer = animPlayer;
+    constructor(scene) {
+        super();
+        
+        this.scene = scene;
 
-        this.animFactory = new AnimFactory();
+        this.compareIdx = null;
     }
 
     execute(onFinishCallback) {
-        const obj1 = this.arrWithKey.arr2d.elemAtIdx(this.idx);
-        const obj2 = this.arrWithKey.key;
+        this.compareIdx = this.scene.data.get('compareIdx');
+
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.compareIdx);
+        const key = this.scene.drawables.get('key');
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.YELLOW, COLORS.BLACK));
+        anims.push(this.scene.animFactory.changeColorSimultaneously([compared, key], COLORS.YELLOW, COLORS.BLACK));
 
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.compareIdx);
+        const key = this.scene.drawables.get('key');
 
-        vec4CopyValues(col1, COLORS.YELLOW);
-        vec4CopyValues(col2, COLORS.YELLOW);
+        vec4CopyValues(compared.col, COLORS.YELLOW);
+        vec4CopyValues(key.col, COLORS.YELLOW);
     }
 
     skip() {
-        const col1 = this.arrWithKey.arr2d.elemAtIdx(this.idx).col;
-        const col2 = this.arrWithKey.key.col;
+        this.compareIdx = this.scene.data.get('compareIdx');
 
-        vec4CopyValues(col1, COLORS.BLACK);
-        vec4CopyValues(col2, COLORS.BLACK);
+        const compared = this.scene.drawables.get('array').elemAtIdx(this.compareIdx);
+        const key = this.scene.drawables.get('key');
+
+        vec4CopyValues(compared.col, COLORS.BLACK);
+        vec4CopyValues(key.col, COLORS.BLACK);
     }
 
 }
 
-class SIMoveToRightAnim extends SIMoveToRight {
+class SIMoveToRightAnim extends Operation {
 
-    constructor(arrWithKey, idx, animPlayer) {
-        super(arrWithKey, idx);
-        this.animPlayer = animPlayer;
+    constructor(scene, idx) {
+        super();
+        
+        this.scene = scene;
 
-        this.animFactory = new AnimFactory();
+        this.idx = idx;
     }
 
     execute(onFinishCallback) {
-        const pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
-        const posToRight = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx + 1);
+        const array = this.scene.drawables.get('array');
+
+        const pos = array.posAtCellCenterIdx(this.idx);
+        const posToRight = array.posAtCellCenterIdx(this.idx + 1);
 
         const changeVec = [posToRight[0] - pos[0], 0];
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.arr2d.elemAtIdx(this.idx), changeVec));
+        anims.push(this.scene.animFactory.moveByVec(array.elemAtIdx(this.idx), changeVec));
 
-        this.arrWithKey.arr2d.moveElemAtIdxRight(this.idx);
+        this.scene.data.set('compareIdx', this.scene.data.get('compareIdx') + 1);
 
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+        array.moveElemAtIdxRight(this.idx);
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
-        this.arrWithKey.arr2d.moveElemAtIdxLeft(this.idx + 1);
+        const array = this.scene.drawables.get('array');
 
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
+        this.scene.data.set('compareIdx', this.scene.data.get('compareIdx') - 1);
+
+        array.moveElemAtIdxLeft(this.idx + 1);
+
+        array.elemAtIdx(this.idx).pos = array.posAtCellCenterIdx(this.idx);
     }
 
     skip() {
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx + 1);
+        const array = this.scene.drawables.get('array');
 
-        this.arrWithKey.arr2d.moveElemAtIdxRight(this.idx);
+        array.elemAtIdx(this.idx).pos = array.posAtCellCenterIdx(this.idx + 1);
+
+        this.scene.data.set('compareIdx', this.scene.data.get('compareIdx') + 1);
+
+        array.moveElemAtIdxRight(this.idx);
     }
 
 }
 
-class SIPlaceKeyAnim extends SIPlaceKey {
+class SIPlaceKeyAnim extends Operation {
 
-    constructor(arrWithKey, keyIdx, idx, animPlayer) {
-        super(arrWithKey, keyIdx, idx);
-        this.animPlayer = animPlayer;
+    constructor(scene, idx) {
+        super();
+        
+        this.scene = scene;
 
-        this.animFactory = new AnimFactory();
+        this.prevIdx = null;
+        this.idx = idx;
     }
 
     execute(onFinishCallback) {
-        const keyPos = vec2Add(this.arrWithKey.arr2d.posAtCellCenterIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
+        this.prevIdx = this.scene.data.get('keyIdx');
 
-        const changeVec = vec2Subtract(this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx), keyPos);
+        const array = this.scene.drawables.get('array');
+        const key = this.scene.drawables.get('key');
+
+        const keyPos = vec2Add(array.posAtCellCenterIdx(this.prevIdx), [0, -array.height * 2]);
+
+        const changeVec = vec2Subtract(array.posAtCellCenterIdx(this.idx), keyPos);
 
         const anims = [];
 
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, [changeVec[0], 0]));
-        anims.push(this.animFactory.moveByVec(this.arrWithKey.key, [0, changeVec[1]]));
+        anims.push(this.scene.animFactory.moveByVec(key, [changeVec[0], 0]));
+        anims.push(this.scene.animFactory.moveByVec(key, [0, changeVec[1]]));
 
-        this.arrWithKey.arr2d.putElemAtIdx(this.arrWithKey.key, this.idx);
-        this.arrWithKey.key = null;
+        array.putElemAtIdx(key, this.idx);
 
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+        this.scene.drawables.delete('key');
+        this.scene.data.delete('keyIdx');
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
-        this.arrWithKey.key = this.arrWithKey.arr2d.removeElemAtIdx(this.idx);
+        const array = this.scene.drawables.get('array');
 
-        this.arrWithKey.key.pos = vec2Add(this.arrWithKey.arr2d.posAtCellCenterIdx(this.keyIdx), [0, -this.arrWithKey.arr2d.height * 2]);
+        const key = array.removeElemAtIdx(this.idx);
+        this.scene.drawables.set('key', key);
+        this.scene.data.set('keyIdx', this.prevIdx);
+
+        key.pos = vec2Add(array.posAtCellCenterIdx(this.prevIdx), [0, -array.height * 2]);
     }
 
     skip() {
-        this.arrWithKey.arr2d.putElemAtIdx(this.arrWithKey.key, this.idx);
-        this.arrWithKey.key = null;
+        this.prevIdx = this.scene.data.get('keyIdx');
 
-        this.arrWithKey.arr2d.elemAtIdx(this.idx).pos = this.arrWithKey.arr2d.posAtCellCenterIdx(this.idx);
+        const array = this.scene.drawables.get('array');
+        const key = this.scene.drawables.get('key');
+
+        array.putElemAtIdx(key, this.idx);
+
+        this.scene.drawables.delete('key');
+        this.scene.data.delete('keyIdx');
+
+        array.elemAtIdx(this.idx).pos = array.posAtCellCenterIdx(this.idx);
     }
 
 }
