@@ -32,17 +32,11 @@ class SSCreateSplitterBeforeIdxAnim extends Operation {
 
     createSplitter() {
         const array = this.scene.drawables.get('array');
-        
-        const splitterIdx = this.idx;
-        const splitterPos = array.absPosAtGapCenterBeforeIdx(splitterIdx);
-        const splitterColor = alpha0(COLORS_FACTORY.RED);
-        const splitterHeight = array.height * 1.5;
+    
+        const splitter = ArrayOperations.createSplitterBeforeIdx(array, this.idx, this.scene);
 
-        this.scene.drawables.set('splitter', new ArraySplitter2D(splitterPos, splitterColor, splitterHeight, this.scene.ctx));
-
-        const splitter = this.scene.drawables.get('splitter');
-
-        this.scene.data.set('splitterIdx', splitterIdx);
+        this.scene.drawables.set('splitter', splitter);
+        this.scene.data.set('splitterIdx', this.idx);
 
         return splitter;
     }
@@ -60,35 +54,36 @@ class SSMoveSplitterBeforeIdxAnim extends Operation {
     }
 
     execute(onFinishCallback) {
-        const idxFrom = this.idx - 1;
-        const idxTo = this.idx;
+        const array = this.scene.drawables.get('array');
+        const splitter = this.scene.drawables.get('splitter');
 
-        const changeVec = vec2Subtract(this.posAtIdx(idxTo), this.posAtIdx(idxFrom));
-
-        this.scene.data.set('splitterIdx', idxTo);
+        this.scene.data.set('splitterIdx', this.idx);
 
         const anims = [];
 
-        anims.push(this.scene.animFactory.moveByVec(this.scene.drawables.get('splitter'), changeVec));
+        anims.push(ArrayOperations.moveSplitterRight(array, splitter));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
-        const splitterIdx = this.idx - 1;
+        const array = this.scene.drawables.get('array');
+        const splitter = this.scene.drawables.get('splitter');
 
-        this.scene.drawables.get('splitter').pos = this.posAtIdx(splitterIdx);
-        this.scene.data.set('splitterIdx', splitterIdx);
+        this.scene.data.set('splitterIdx', this.idx - 1);
+
+        ArrayOperations.moveSplitterLeftInstant(array, splitter);
     }
 
     skip() {
-        this.scene.drawables.get('splitter').pos = this.posAtIdx(this.idx);
+        const array = this.scene.drawables.get('array');
+        const splitter = this.scene.drawables.get('splitter');
+
         this.scene.data.set('splitterIdx', this.idx);
+
+        ArrayOperations.moveSplitterRightInstant(array, splitter);
     }
 
-    posAtIdx(idx) {
-        return this.scene.drawables.get('array').absPosAtGapCenterBeforeIdx(idx);
-    }
 }
 
 class SSMinIndexChooseAnim extends Operation {
@@ -104,14 +99,9 @@ class SSMinIndexChooseAnim extends Operation {
     execute(onFinishCallback) {
         const array = this.scene.drawables.get('array');
 
-        let cell = array.cellAtIdx(this.idx);
-
         this.scene.data.set('minValueIdx', this.idx);
 
-        const anims = [];
-
-        anims.push(this.scene.animFactory.changeColor(cell, COLORS.BLACK, COLORS.YELLOW));
-        anims.push(this.scene.animFactory.pause());
+        const anims = ArrayOperations.highlightCell(array, this.idx);
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -119,21 +109,17 @@ class SSMinIndexChooseAnim extends Operation {
     reverse() {
         const array = this.scene.drawables.get('array');
 
-        let cell = array.cellAtIdx(this.idx);
-
         this.scene.data.delete('minValueIdx');
 
-        vec4CopyValues(cell.col, COLORS.BLACK);
+        ArrayOperations.unhighlightCellInstant(array, this.idx);
     }
 
     skip() {
         const array = this.scene.drawables.get('array');
 
-        let cell = array.cellAtIdx(this.idx);
-
         this.scene.data.set('minValueIdx', this.idx);
 
-        vec4CopyValues(cell.col, COLORS.YELLOW);
+        ArrayOperations.highlightCellInstant(array, this.idx);
     }
 
 }
@@ -155,15 +141,10 @@ class SSMinIndexChangeAnim extends Operation {
         this.prevIdx = this.scene.data.get('minValueIdx');
         this.scene.data.set('minValueIdx', this.newIdx);
 
-        let cellFrom = array.cellAtIdx(this.prevIdx);
-        let cellTo = array.cellAtIdx(this.newIdx);
-
         const anims = [];
 
-        anims.push(this.scene.animFactory.changeColor(cellFrom, COLORS.YELLOW, COLORS.BLACK));
-        anims.push(this.scene.animFactory.pause());
-        anims.push(this.scene.animFactory.changeColor(cellTo, COLORS.BLACK, COLORS.YELLOW));
-        anims.push(this.scene.animFactory.pause());
+        anims.push(...ArrayOperations.unhighlightCell(array, this.prevIdx));
+        anims.push(...ArrayOperations.highlightCell(array, this.newIdx));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -173,11 +154,8 @@ class SSMinIndexChangeAnim extends Operation {
 
         this.scene.data.set('minValueIdx', this.prevIdx);
 
-        let cellFrom = array.cellAtIdx(this.prevIdx);
-        let cellTo = array.cellAtIdx(this.newIdx);
-
-        vec4CopyValues(cellFrom.col, COLORS.YELLOW);
-        vec4CopyValues(cellTo.col, COLORS.BLACK);
+        ArrayOperations.unhighlightCellInstant(array, this.newIdx);
+        ArrayOperations.highlightCellInstant(array, this.prevIdx)
     }
 
     skip() {
@@ -186,11 +164,8 @@ class SSMinIndexChangeAnim extends Operation {
         this.prevIdx = this.scene.data.get('minValueIdx');
         this.scene.data.set('minValueIdx', this.newIdx);
 
-        let cellFrom = array.cellAtIdx(this.prevIdx);
-        let cellTo = array.cellAtIdx(this.newIdx);
-
-        vec4CopyValues(cellFrom.col, COLORS.BLACK);
-        vec4CopyValues(cellTo.col, COLORS.YELLOW);
+        ArrayOperations.unhighlightCellInstant(array, this.prevIdx);
+        ArrayOperations.highlightCellInstant(array, this.newIdx)
     }
 
 }
@@ -209,14 +184,9 @@ class SSMinIndexReleaseAnim extends Operation {
         const array = this.scene.drawables.get('array');
 
         this.idx = this.scene.data.get('minValueIdx');
-
-        const cell = array.cellAtIdx(this.idx);
-
         this.scene.data.delete('minValueIdx');
 
-        const anims = [];
-
-        anims.push(this.scene.animFactory.changeColor(cell, COLORS.YELLOW, COLORS.BLACK));
+        const anims = ArrayOperations.unhighlightCell(array, this.idx);
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -224,23 +194,18 @@ class SSMinIndexReleaseAnim extends Operation {
     reverse() {
         const array = this.scene.drawables.get('array');
 
-        const cell = array.cellAtIdx(this.idx);
-
         this.scene.data.set('minValueIdx', this.idx);
 
-        vec4CopyValues(cell.col, COLORS.YELLOW);
+        ArrayOperations.highlightCellInstant(array, this.idx);
     }
 
     skip() {
         const array = this.scene.drawables.get('array');
 
         this.idx = this.scene.data.get('minValueIdx');
-
-        const cell = array.cellAtIdx(this.idx);
-
         this.scene.data.delete('minValueIdx');
 
-        vec4CopyValues(cell.col, COLORS.BLACK);
+        ArrayOperations.unhighlightCellInstant(array, this.idx);
     }
 
 }
@@ -262,13 +227,7 @@ class SSCompareStartAnim extends Operation {
         this.scene.data.set('compareIdx1', this.idx1);
         this.scene.data.set('compareIdx2', this.idx2);
 
-        const obj1 = array.elemAtIdx(this.idx1);
-        const obj2 = array.elemAtIdx(this.idx2);
-
-        const anims = [];
-
-        anims.push(this.scene.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
-        anims.push(this.scene.animFactory.pause());
+        const anims = ArrayOperations.highlightText(array, this.idx1, this.idx2);
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -276,11 +235,7 @@ class SSCompareStartAnim extends Operation {
     reverse() {
         const array = this.scene.drawables.get('array');
 
-        const obj1 = array.elemAtIdx(this.idx1);
-        const obj2 = array.elemAtIdx(this.idx2);
-
-        vec4CopyValues(obj1.col, COLORS.BLACK);
-        vec4CopyValues(obj2.col, COLORS.BLACK);
+        ArrayOperations.unhighlightTextInstant(array, this.idx1, this.idx2);
     }
 
     skip() {
@@ -289,11 +244,7 @@ class SSCompareStartAnim extends Operation {
         this.scene.data.set('compareIdx1', this.idx1);
         this.scene.data.set('compareIdx2', this.idx2);
 
-        const obj1 = array.elemAtIdx(this.idx1);
-        const obj2 = array.elemAtIdx(this.idx2);
-
-        vec4CopyValues(obj1.col, COLORS.YELLOW);
-        vec4CopyValues(obj2.col, COLORS.YELLOW);
+        ArrayOperations.highlightTextInstant(array, this.idx1, this.idx2);
     }
 
 }
@@ -315,13 +266,7 @@ class SSCompareEndAnim extends Operation {
         this.compareIdx1 = this.scene.data.get('compareIdx1');
         this.compareIdx2 = this.scene.data.get('compareIdx2');
 
-        const obj1 = array.elemAtIdx(this.compareIdx1);
-        const obj2 = array.elemAtIdx(this.compareIdx2);
-
-        const anims = [];
-
-        anims.push(this.scene.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.YELLOW, COLORS.BLACK));
-        anims.push(this.scene.animFactory.pause());
+        const anims = ArrayOperations.unhighlightText(array, this.compareIdx1, this.compareIdx2);
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -329,11 +274,7 @@ class SSCompareEndAnim extends Operation {
     reverse() {
         const array = this.scene.drawables.get('array');
 
-        const obj1 = array.elemAtIdx(this.compareIdx1);
-        const obj2 = array.elemAtIdx(this.compareIdx2);
-
-        vec4CopyValues(obj1.col, COLORS.YELLOW);
-        vec4CopyValues(obj2.col, COLORS.YELLOW);
+        ArrayOperations.highlightTextInstant(array, this.compareIdx1, this.compareIdx2);
     }
 
     skip() {
@@ -342,11 +283,7 @@ class SSCompareEndAnim extends Operation {
         this.compareIdx1 = this.scene.data.get('compareIdx1');
         this.compareIdx2 = this.scene.data.get('compareIdx2');
 
-        const obj1 = array.elemAtIdx(this.compareIdx1);
-        const obj2 = array.elemAtIdx(this.compareIdx2);
-
-        vec4CopyValues(obj1.col, COLORS.BLACK);
-        vec4CopyValues(obj2.col, COLORS.BLACK);
+        ArrayOperations.unhighlightTextInstant(array, this.compareIdx1, this.compareIdx2);
     }
 
 }
@@ -365,52 +302,21 @@ class SSSwapAnim extends Operation {
     execute(onFinishCallback) {
         const array = this.scene.drawables.get('array');
 
-        const obj1 = array.elemAtIdx(this.idx1);
-        const obj2 = array.elemAtIdx(this.idx2);
-
-        const anims = [];
-
-        const slot1Pos = array.posAtCellCenterIdx(this.idx1);
-        const slot2Pos = array.posAtCellCenterIdx(this.idx2);
-
-        const xDiff = slot2Pos[0] - slot1Pos[0];
-
-        const arrHeight = array.height;
-
-        anims.push(new AnimationSync([
-            this.scene.animFactory.moveByVec(obj1, [0, -arrHeight]),
-            this.scene.animFactory.moveByVec(obj2, [0, arrHeight])
-        ]));
-        anims.push(new AnimationSync([
-            this.scene.animFactory.moveByVec(obj1, [xDiff, 0]),
-            this.scene.animFactory.moveByVec(obj2, [-xDiff, 0])
-        ]))
-        anims.push(new AnimationSync([
-            this.scene.animFactory.moveByVec(obj1, [0, arrHeight]),
-            this.scene.animFactory.moveByVec(obj2, [0, -arrHeight])
-        ]));
+        const anims = ArrayOperations.swap(array, this.idx1, this.idx2);
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
-
-        array.swap(this.idx1, this.idx2);
     }
 
     reverse() {
         const array = this.scene.drawables.get('array');
 
-        array.elemAtIdx(this.idx1).pos = array.posAtCellCenterIdx(this.idx2);
-        array.elemAtIdx(this.idx2).pos = array.posAtCellCenterIdx(this.idx1);
-
-        array.swap(this.idx1, this.idx2);
+        ArrayOperations.swapInstant(array, this.idx1, this.idx2);
     }
 
     skip() {
         const array = this.scene.drawables.get('array');
 
-        array.elemAtIdx(this.idx1).pos = array.posAtCellCenterIdx(this.idx2);
-        array.elemAtIdx(this.idx2).pos = array.posAtCellCenterIdx(this.idx1);
-
-        array.swap(this.idx1, this.idx2);
+        ArrayOperations.swapInstant(array, this.idx1, this.idx2);
     }
 
 }

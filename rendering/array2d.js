@@ -7,20 +7,23 @@ class Array2D extends Object2D {
         this.cellGap = cellGap;
         this.ctx = ctx;
 
-        const CELL_WIDTH = 80;
+        const CELL_WIDTH = 110;
 
         this.cells = new ArrayCells2D(arr.length, CELL_WIDTH, [0, 0], this.cellGap, this.ctx);
         this.cells.parent = this;
 
         this.elems = new Array(arr.length);
         for(let i = 0; i < arr.length; i++) {
-            this.elems[i] = new Text2D(
-                arr[i].toString(), 
-                this.cells.posAtCellCenterIdx(i), 
-                COLORS_FACTORY.BLACK, 
-                ctx
-            );
-            this.elems[i].parent = this;
+            if(arr[i] != null) {
+                this.elems[i] = new Text2D(
+                    arr[i].toString(), 
+                    this.cells.posAtCellCenterIdx(i), 
+                    COLORS_FACTORY.BLACK, 
+                    ctx
+                );
+                this.elems[i].parent = this;
+            }
+            
         }
 
         this.height = CELL_WIDTH;
