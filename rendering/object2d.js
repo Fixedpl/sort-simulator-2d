@@ -1,8 +1,8 @@
 
 class Object2D {
 
-    constructor() {
-        this._parent = null;
+    constructor(parent = null) {
+        this._parent = parent;
         this.pos = [0, 0];
         this.col = [0, 0, 0, 0.0];
     }

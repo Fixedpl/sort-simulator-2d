@@ -19,6 +19,9 @@ function setupChosenSort() {
         case 'selection':
             canvas2d = new SelectionSort2D(traceSelectionSort(generateRandomArray(6)), [120, 400]);
             break;
+        case 'merge':
+            canvas2d = new MergeSort2D(traceMergeSort(generateRandomArray(5)), [420, 150]);
+            break;
     }
 
     canvas2d.run();
