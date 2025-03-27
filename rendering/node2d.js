@@ -12,6 +12,8 @@ class Node2D extends Object2D {
         this.left = left;
         this.right = right;
 
+        this.sorted = null;
+
         this.width = el.width;
     }
 
@@ -32,6 +34,10 @@ class Node2D extends Object2D {
 
         if(this.right != null) {
             this.right.draw();
+        }
+
+        if(this.sorted != null) {
+            this.sorted.draw();
         }
     }
 

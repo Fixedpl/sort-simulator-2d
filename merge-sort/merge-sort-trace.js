@@ -22,27 +22,29 @@ function mergeSort(arr, trace) {
     const right = mergeSort(arr.slice(mid), trace);
     trace.sortRightEnd();
     
-    //trace.merge();
-    return merge(left, right);
+    trace.merge();
+    return merge(left, right, trace);
 }
 
-function merge(left, right) {
+function merge(left, right, trace) {
     let result = [];
     let i = 0, j = 0;
     
     while (i < left.length && j < right.length) {
-        // trace.mergeCompare(i, j);
+        trace.mergeCompare(i, j);
         if (left[i] < right[j]) {
-            // trace.mergePickLeft();
+            trace.mergePickLeft();
             result.push(left[i]);
             i++;
         } else {
-            // trace.mergePickRight();
+            trace.mergePickRight();
             result.push(right[j]);
             j++;
         }
+        trace.mergeCompareEnd();
     }
     
+    trace.mergePickRest();
     return result.concat(left.slice(i)).concat(right.slice(j));
 }
 
@@ -55,7 +57,9 @@ const MergeSortTraceType = {
     MERGE: 'MERGE',
     MERGE_COMPARE: 'MERGE_COMPARE',
     MERGE_PICK_LEFT: 'MERGE_PICK_LEFT',
-    MERGE_PICK_RIGHT: 'MERGE_PICK_RIGHT'
+    MERGE_PICK_RIGHT: 'MERGE_PICK_RIGHT',
+    MERGE_PICK_REST: 'MERGE_PICK_REST',
+    MERGE_COMPARE_END: 'MERGE_COMPARE_END',
 }
 
 class MergeSortTrace {
@@ -119,6 +123,18 @@ class MergeSortTrace {
     mergePickRight() {
         this.traces.push({
             type: MergeSortTraceType.MERGE_PICK_RIGHT
+        })
+    }
+
+    mergePickRest() {
+        this.traces.push({
+            type: MergeSortTraceType.MERGE_PICK_REST
+        })
+    }
+
+    mergeCompareEnd() {
+        this.traces.push({
+            type: MergeSortTraceType.MERGE_COMPARE_END
         })
     }
 }

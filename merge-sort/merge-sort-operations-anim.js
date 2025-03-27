@@ -1,69 +1,4 @@
 
-class SMHighlightArrayAnim extends Operation {
-
-    constructor(arr, animPlayer) {
-        super(arr);
-        this.animPlayer = animPlayer;
-
-        this.animFactory = new AnimFactory();
-    }
-
-    execute(onFinishCallback) {
-        const obj = this.arr.cells;
-
-        const anims = [];
-
-        anims.push(this.animFactory.changeColor(obj, COLORS.BLACK, COLORS.YELLOW));
-
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
-    }
-
-    reverse() {
-        const col = this.arr.cells.col;
-
-        vec4CopyValues(col, COLORS.BLACK);
-    }
-
-    skip() {
-        const col = this.arr.cells.col;
-
-        vec4CopyValues(col, COLORS.YELLOW);
-    }
-
-}
-
-class SMUnhighlightArrayAnim extends Operation {
-
-    constructor(arr, animPlayer) {
-        super(arr);
-        this.animPlayer = animPlayer;
-
-        this.animFactory = new AnimFactory();
-    }
-
-    execute(onFinishCallback) {
-        const obj = this.arr.cells;
-
-        const anims = [];
-
-        anims.push(this.animFactory.changeColor(obj, COLORS.YELLOW, COLORS.BLACK));
-
-        this.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
-    }
-
-    reverse() {
-        const col = this.arr.cells.col;
-
-        vec4CopyValues(col, COLORS.YELLOW);
-    }
-
-    skip() {
-        const col = this.arr.cells.col;
-
-        vec4CopyValues(col, COLORS.BLACK);
-    }
-
-}
 
 class SMSplitAnim extends Operation {
 
@@ -91,11 +26,11 @@ class SMSplitAnim extends Operation {
         currentNode.right = new Node2D(arrRight, [0, 0], currentNode);
 
         if(arrLeft.elems.length == 1) {
-            currentNode.left.sorted = currentNode.left;
+            currentNode.left.sorted = arrLeft;
         }
 
         if(arrRight.elems.length == 1) {
-            currentNode.right.sorted = currentNode.right;
+            currentNode.right.sorted = arrRight;
         }
 
         this.shiftNodesToFitNew(currentNode, currentNode.left, this.NODE_GAP);
@@ -143,11 +78,11 @@ class SMSplitAnim extends Operation {
         currentNode.right = new Node2D(arrRight, [0, 0], currentNode);
 
         if(arrLeft.elems.length == 1) {
-            currentNode.left.sorted = currentNode.left;
+            currentNode.left.sorted = arrLeft;
         }
 
         if(arrRight.elems.length == 1) {
-            currentNode.right.sorted = currentNode.right;
+            currentNode.right.sorted = arrRight;
         }
 
         const childrenYShift = array.height * 1.5;
@@ -359,26 +294,361 @@ class SMMergeAnim extends Operation {
     }
 
     execute(onFinishCallback) {
+        const mergeArray = this.createMergeArray();
+
+        const anims = [];
+        anims.push(this.scene.animFactory.showSync(mergeArray.cells.cells));
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+    }
+
+    reverse() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        currentNode.sorted = null;
+
+        this.scene.data.delete('mergeArray');
+        this.scene.data.delete('mergeArrayIdx');
+
+        this.scene.data.delete('i');
+        this.scene.data.delete('j');
+    }
+
+    skip() {
+        const mergeArray = this.createMergeArray();
+
+        alpha1Arr(mergeArray.cells.cells);
+    }
+
+    createMergeArray() {
         const currentNode = this.scene.data.get('currentNode');
         
-        const leftChild = currentNode.left;
-        const rightChild = currentNode.right;
+        const leftChild = currentNode.left.sorted;
+        const rightChild = currentNode.right.sorted;
+
+        const leftChildPos = leftChild.absPos;
+        const rightChildPos = rightChild.absPos;
+
+        let destY = leftChildPos[1] > rightChildPos[1] ? leftChildPos[1] : rightChildPos[1];
+        destY += leftChild.height * 1.5;
+
+        const mergeArray = currentNode.el.slice(0);
+        mergeArray.clear();
+        mergeArray.pos[1] += destY;
+        mergeArray.pos[1] -= currentNode.el.absPos[1];
+
+        alpha0Arr(mergeArray.cells.cells);
+
+        currentNode.sorted = mergeArray;
+
+        this.scene.data.set('mergeArray', mergeArray);
+        this.scene.data.set('mergeArrayIdx', 0);
+
+        this.scene.data.set('i', 0);
+        this.scene.data.set('j', 0);
+
+        return mergeArray;
+    }
+
+}
+
+class SMMergeCompareAnim extends Operation {
+
+    constructor(scene, idx1, idx2) {
+        super();
+        
+        this.scene = scene;
+
+        this.idx1 = idx1;
+        this.idx2 = idx2;
+    }
+
+    execute(onFinishCallback) {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        this.scene.data.set('compareIdx1', this.idx1);
+        this.scene.data.set('compareIdx2', this.idx2);
 
         const anims = [];
         anims.push(new AnimationSync([
-            this.scene.animFactory.moveByVec(currentNode.left,  [-changeVec[0], changeVec[1]]),
-            this.scene.animFactory.moveByVec(currentNode.right, [changeVec[0], changeVec[1]])
+            ArrayOperations.highlightText(leftSortedArr, this.idx1),
+            ArrayOperations.highlightText(rightSortedArr, this.idx2)
         ]));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
 
     reverse() {
+        const currentNode = this.scene.data.get('currentNode');
 
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        this.scene.data.delete('compareIdx1');
+        this.scene.data.delete('compareIdx2');
+
+        ArrayOperations.unhighlightTextInstant(leftSortedArr, this.idx1);
+        ArrayOperations.unhighlightTextInstant(rightSortedArr, this.idx2);
     }
 
     skip() {
+        const currentNode = this.scene.data.get('currentNode');
 
+        this.scene.data.set('compareIdx1', this.idx1);
+        this.scene.data.set('compareIdx2', this.idx2);
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        ArrayOperations.highlightTextInstant(leftSortedArr, this.idx1);
+        ArrayOperations.highlightTextInstant(rightSortedArr, this.idx2);
+    }
+
+}
+
+class SMMergePickLeftAnim extends Operation {
+
+    constructor(scene) {
+        super();
+        
+        this.scene = scene;
+    }
+
+    execute(onFinishCallback) {
+        const elem = this.copyToMergeArray();
+
+        const anims = [];
+        anims.push(this.scene.animFactory.show(elem));
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+    }
+
+    reverse() {
+        const i = this.scene.data.get('i');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        const mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+
+        this.scene.data.set('mergeArrayIdx', mergeArrayIdx - 1);
+        this.scene.data.set('i', i - 1);
+
+        mergeArray.elems[mergeArrayIdx - 1] = null;
+    }
+
+    skip() {
+        const elem = this.copyToMergeArray();
+
+        alpha1(elem.col);
+    }
+
+    copyToMergeArray() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+
+        const i = this.scene.data.get('i');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        const mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+
+        ArrayOperations.copyArrayText(leftSortedArr, i, mergeArray, mergeArrayIdx);
+        alpha0(mergeArray.elems[mergeArrayIdx].col);
+
+        this.scene.data.set('mergeArrayIdx', mergeArrayIdx + 1);
+        this.scene.data.set('i', i + 1);
+
+        return mergeArray.elems[mergeArrayIdx];
+    }
+
+}
+
+class SMMergePickRightAnim extends Operation {
+
+    constructor(scene) {
+        super();
+        
+        this.scene = scene;
+    }
+
+    execute(onFinishCallback) {
+        const elem = this.copyToMergeArray();
+
+        const anims = [];
+        anims.push(this.scene.animFactory.show(elem));
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+    }
+
+    reverse() {
+        const j = this.scene.data.get('j');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        const mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+
+        this.scene.data.set('mergeArrayIdx', mergeArrayIdx - 1);
+        this.scene.data.set('j', j - 1);
+
+        mergeArray.elems[mergeArrayIdx - 1] = null;
+    }
+
+    skip() {
+        const elem = this.copyToMergeArray();
+
+        alpha1(elem.col);
+    }
+
+    copyToMergeArray() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const rightSortedArr = currentNode.right.sorted;
+
+        const j = this.scene.data.get('j');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        const mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+
+        ArrayOperations.copyArrayText(rightSortedArr, j, mergeArray, mergeArrayIdx);
+        alpha0(mergeArray.elems[mergeArrayIdx].col);
+
+        this.scene.data.set('mergeArrayIdx', mergeArrayIdx + 1);
+        this.scene.data.set('j', j + 1);
+
+        return mergeArray.elems[mergeArrayIdx];
+    }
+
+}
+
+class SMMergePickRestAnim extends Operation {
+
+    constructor(scene) {
+        super();
+        
+        this.scene = scene;
+
+        this.mergeArray = null;
+        this.mergeArrayIdxStart = null;
+    }
+
+    execute(onFinishCallback) {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        let i = this.scene.data.get('i');
+        let j = this.scene.data.get('j');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        let mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+        this.mergeArrayIdxStart = mergeArrayIdx;
+        this.mergeArray = mergeArray;
+
+        const anims = [];
+
+        while(i != leftSortedArr.length) {
+            ArrayOperations.copyArrayText(leftSortedArr, i++, mergeArray, mergeArrayIdx++);
+            alpha0(mergeArray.elems[mergeArrayIdx - 1].col);
+
+            anims.push(this.scene.animFactory.show(mergeArray.elems[mergeArrayIdx - 1]));
+        }
+
+        while(j != rightSortedArr.length) {
+            ArrayOperations.copyArrayText(rightSortedArr, j++, mergeArray, mergeArrayIdx++);
+            alpha0(mergeArray.elems[mergeArrayIdx - 1].col);
+
+            anims.push(this.scene.animFactory.show(mergeArray.elems[mergeArrayIdx - 1]));
+        }
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+    }
+
+    reverse() {
+        for(let i = this.mergeArrayIdxStart; i < this.mergeArray.length; i++) {
+            this.mergeArray.elems[i] = null;
+        }
+
+        this.scene.data.set('mergeArray', this.mergeArray);
+        this.scene.data.set('mergeArrayIdx', this.mergeArrayIdxStart);
+    }
+
+    skip() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        let i = this.scene.data.get('i');
+        let j = this.scene.data.get('j');
+
+        const mergeArray = this.scene.data.get('mergeArray');
+        let mergeArrayIdx = this.scene.data.get('mergeArrayIdx');
+        this.mergeArrayIdxStart = mergeArrayIdx;
+        this.mergeArray = mergeArray;
+
+        while(i != leftSortedArr.length) {
+            ArrayOperations.copyArrayText(leftSortedArr, i++, mergeArray, mergeArrayIdx++);
+        }
+
+        while(j != rightSortedArr.length) {
+            ArrayOperations.copyArrayText(rightSortedArr, j++, mergeArray, mergeArrayIdx++);
+        }
+    }
+
+}
+
+class SMMergeCompareEndAnim extends Operation {
+
+    constructor(scene) {
+        super();
+        
+        this.scene = scene;
+
+        this.compareIdx1 = null;
+        this.compareIdx2 = null;
+    }
+
+    execute(onFinishCallback) {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        this.compareIdx1 = this.scene.data.get('compareIdx1');
+        this.compareIdx2 = this.scene.data.get('compareIdx2');
+
+        const anims = [];
+        anims.push(new AnimationSync([
+            ArrayOperations.unhighlightText(leftSortedArr, this.compareIdx1),
+            ArrayOperations.unhighlightText(rightSortedArr, this.compareIdx2)
+        ]));
+
+        this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
+    }
+
+    reverse() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        ArrayOperations.highlightTextInstant(leftSortedArr, this.compareIdx1);
+        ArrayOperations.highlightTextInstant(rightSortedArr, this.compareIdx2);
+    }
+
+    skip() {
+        const currentNode = this.scene.data.get('currentNode');
+
+        const leftSortedArr = currentNode.left.sorted;
+        const rightSortedArr = currentNode.right.sorted;
+
+        this.compareIdx1 = this.scene.data.get('compareIdx1');
+        this.compareIdx2 = this.scene.data.get('compareIdx2');
+
+        ArrayOperations.unhighlightTextInstant(leftSortedArr, this.compareIdx1);
+        ArrayOperations.unhighlightTextInstant(rightSortedArr, this.compareIdx2);
     }
 
 }

@@ -55,6 +55,7 @@ class Simulation {
             return;
         }
 
+        console.log(this.operations[this.operationIdx]);
         this.operations[this.operationIdx++].skip();
     }
 
@@ -63,6 +64,7 @@ class Simulation {
             return;
         }
 
+        console.log(this.operations[this.operationIdx - 1]);
         this.operations[--this.operationIdx].reverse();
     }
 

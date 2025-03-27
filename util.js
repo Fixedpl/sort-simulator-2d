@@ -102,7 +102,21 @@ function alpha0(col) {
     return col;
 }
 
+function alpha0Arr(arr) {
+    for(let el of arr) {
+        alpha0(el.col);
+    }
+    return arr;
+}
+
 function alpha1(col) {
     col[3] = 1.0;
     return col;
+}
+
+function alpha1Arr(arr) {
+    for(let el of arr) {
+        alpha1(el.col);
+    }
+    return arr;
 }

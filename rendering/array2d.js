@@ -7,7 +7,7 @@ class Array2D extends Object2D {
         this.cellGap = cellGap;
         this.ctx = ctx;
 
-        const CELL_WIDTH = 110;
+        const CELL_WIDTH = 80;
 
         this.cells = new ArrayCells2D(arr.length, CELL_WIDTH, [0, 0], this.cellGap, this.ctx);
         this.cells.parent = this;
@@ -30,6 +30,10 @@ class Array2D extends Object2D {
         this.width = CELL_WIDTH * this.elems.length + this.cellGap * (this.elems.length - 1);
     }
     
+    get length() {
+        return this.elems.length;
+    }
+
     removeElemAtIdx(idx) {
         const elem = this.elems[idx];
         
@@ -98,10 +102,14 @@ class Array2D extends Object2D {
         return newArr;
     }
 
+    clear() {
+        this.elems.fill(null);
+    }
+
     draw() {
         for(let i = 0; i < this.elems.length; i++) {
             let elem = this.elems[i];
-            if(elem !== null) {
+            if(elem != null) {
                 elem.draw();
             }
         }

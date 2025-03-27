@@ -43,16 +43,19 @@ class ArrayOperations {
         array.swap(idx1, idx2);
     }
 
-    static highlightText(array, idx1, idx2) {
-        const obj1 = array.elemAtIdx(idx1)
-        const obj2 = array.elemAtIdx(idx2)
+    static highlightText(array, idx1, idx2 = -1) {
+        const objs = [array.elemAtIdx(idx1)];
+
+        if(idx2 != -1) {
+            objs.push(array.elemAtIdx(idx2));
+        }
 
         const anims = [];
 
-        anims.push(this.animFactory.changeColorSimultaneously([obj1, obj2], COLORS.BLACK, COLORS.YELLOW));
+        anims.push(this.animFactory.changeColorSimultaneously(objs, COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
-        return anims;
+        return new AnimationGroup(anims);
     }
 
     static highlightTextInstant(array, idx1, idx2 = -1) {
@@ -81,7 +84,7 @@ class ArrayOperations {
         anims.push(this.animFactory.changeColorSimultaneously(objs, COLORS.YELLOW, COLORS.BLACK));
         anims.push(this.animFactory.pause());
 
-        return anims;
+        return new AnimationGroup(anims);
     }
 
     static unhighlightTextInstant(array, idx1, idx2 = -1) {
@@ -170,5 +173,14 @@ class ArrayOperations {
         const splitterHeight = array.height * 1.5;
 
         return new ArraySplitter2D(splitterPos, splitterColor, splitterHeight, scene.ctx);
+    }
+
+    static copyArrayText(arraySrc, srcIdx, arrayDest, destIdx) {
+        const srcText = arraySrc.elems[srcIdx];
+
+        const dstText = new Text2D(srcText.val, arrayDest.posAtCellCenterIdx(destIdx), COLORS_FACTORY.BLACK, arraySrc.ctx);
+        dstText.parent = arrayDest;
+        
+        arrayDest.putElemAtIdx(dstText, destIdx);
     }
 }

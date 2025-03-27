@@ -33,6 +33,16 @@ class AnimFactory {
         return new Animation(new AlphaAnimationFunc(obj, 0.0, 1.0, this.tweenFunc), this.animTime);
     }
 
+    showSync(arr) {
+        const anims = [];
+
+        for(let el of arr) {
+            anims.push(this.show(el));
+        }
+
+        return new AnimationSync(anims);
+    }
+
     hide(obj) {
         return new Animation(new AlphaAnimationFunc(obj, 1.0, 0.0, this.tweenFunc), this.animTime);
     }

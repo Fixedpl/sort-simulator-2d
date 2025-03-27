@@ -227,7 +227,7 @@ class SSCompareStartAnim extends Operation {
         this.scene.data.set('compareIdx1', this.idx1);
         this.scene.data.set('compareIdx2', this.idx2);
 
-        const anims = ArrayOperations.highlightText(array, this.idx1, this.idx2);
+        const anims = [ArrayOperations.highlightText(array, this.idx1, this.idx2)];
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -266,7 +266,7 @@ class SSCompareEndAnim extends Operation {
         this.compareIdx1 = this.scene.data.get('compareIdx1');
         this.compareIdx2 = this.scene.data.get('compareIdx2');
 
-        const anims = ArrayOperations.unhighlightText(array, this.compareIdx1, this.compareIdx2);
+        const anims = [ArrayOperations.unhighlightText(array, this.compareIdx1, this.compareIdx2)];
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
