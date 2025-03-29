@@ -109,7 +109,7 @@ class ArrayOperations {
         anims.push(this.animFactory.changeColor(cell, COLORS.BLACK, COLORS.YELLOW));
         anims.push(this.animFactory.pause());
 
-        return anims;
+        return new AnimationGroup(anims);
     }
 
     static highlightCellInstant(array, idx) {
@@ -126,7 +126,7 @@ class ArrayOperations {
         anims.push(this.animFactory.changeColor(cell, COLORS.YELLOW, COLORS.BLACK));
         anims.push(this.animFactory.pause());
 
-        return anims;
+        return new AnimationGroup(anims);
     }
 
     static unhighlightCellInstant(array, idx) {
@@ -136,25 +136,25 @@ class ArrayOperations {
     }
 
     static moveSplitterLeft(array, splitter) {
-        const changeVec = [-(array.cells.width + array.cells.gap), 0];
+        const changeVec = [-(array.cellWidth + array.cellGap), 0];
 
         return this.animFactory.moveByVec(splitter, changeVec);
     }
 
     static moveSplitterLeftInstant(array, splitter) {
-        const changeVec = [-(array.cells.width + array.cells.gap), 0];
+        const changeVec = [-(array.cellWidth + array.cellGap), 0];
 
         splitter.pos = vec2Add(splitter.pos, changeVec);
     }
 
     static moveSplitterRight(array, splitter) {
-        const changeVec = [array.cells.width + array.cells.gap, 0];
+        const changeVec = [array.cellWidth + array.cellGap, 0];
 
         return this.animFactory.moveByVec(splitter, changeVec)
     }
 
     static moveSplitterRightInstant(array, splitter) {
-        const changeVec = [array.cells.width + array.cells.gap, 0];
+        const changeVec = [array.cellWidth + array.cellGap, 0];
 
         splitter.pos = vec2Add(splitter.pos, changeVec);
     }
@@ -183,4 +183,23 @@ class ArrayOperations {
         
         arrayDest.putElemAtIdx(dstText, destIdx);
     }
+
+    static copyWholeArrayText(arraySrc, arrayDest, destIdx) {
+        for(let srcText of arraySrc.elems) {
+            const dstText = new Text2D(srcText.val, arrayDest.posAtCellCenterIdx(destIdx), COLORS_FACTORY.BLACK, arraySrc.ctx);
+            dstText.parent = arrayDest;
+            
+            arrayDest.putElemAtIdx(dstText, destIdx++);
+        }
+    }
+
+    static fillArrayWithValue(value, arrayDest, destIdx, repeat = 1) {
+        for(let i = 0; i < repeat; i++) {
+            const dstText = new Text2D(value, arrayDest.posAtCellCenterIdx(destIdx), COLORS_FACTORY.BLACK, arrayDest.ctx);
+            dstText.parent = arrayDest;
+            
+            arrayDest.putElemAtIdx(dstText, destIdx++);
+        }
+    }
+
 }

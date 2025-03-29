@@ -297,7 +297,7 @@ class SMMergeAnim extends Operation {
         const mergeArray = this.createMergeArray();
 
         const anims = [];
-        anims.push(this.scene.animFactory.showSync(mergeArray.cells.cells));
+        anims.push(this.scene.animFactory.showSync(mergeArray.cells));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -317,7 +317,7 @@ class SMMergeAnim extends Operation {
     skip() {
         const mergeArray = this.createMergeArray();
 
-        alpha1Arr(mergeArray.cells.cells);
+        alpha1Arr(mergeArray.cells);
     }
 
     createMergeArray() {
@@ -337,7 +337,7 @@ class SMMergeAnim extends Operation {
         mergeArray.pos[1] += destY;
         mergeArray.pos[1] -= currentNode.el.absPos[1];
 
-        alpha0Arr(mergeArray.cells.cells);
+        alpha0Arr(mergeArray.cells);
 
         currentNode.sorted = mergeArray;
 

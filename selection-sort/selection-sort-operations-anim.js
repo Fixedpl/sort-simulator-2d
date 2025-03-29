@@ -101,7 +101,7 @@ class SSMinIndexChooseAnim extends Operation {
 
         this.scene.data.set('minValueIdx', this.idx);
 
-        const anims = ArrayOperations.highlightCell(array, this.idx);
+        const anims = [ArrayOperations.highlightCell(array, this.idx)];
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -143,8 +143,8 @@ class SSMinIndexChangeAnim extends Operation {
 
         const anims = [];
 
-        anims.push(...ArrayOperations.unhighlightCell(array, this.prevIdx));
-        anims.push(...ArrayOperations.highlightCell(array, this.newIdx));
+        anims.push(ArrayOperations.unhighlightCell(array, this.prevIdx));
+        anims.push(ArrayOperations.highlightCell(array, this.newIdx));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -186,7 +186,7 @@ class SSMinIndexReleaseAnim extends Operation {
         this.idx = this.scene.data.get('minValueIdx');
         this.scene.data.delete('minValueIdx');
 
-        const anims = ArrayOperations.unhighlightCell(array, this.idx);
+        const anims = [ArrayOperations.unhighlightCell(array, this.idx)];
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
