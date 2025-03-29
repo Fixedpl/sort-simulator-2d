@@ -22,6 +22,9 @@ function setupChosenSort() {
         case 'merge':
             canvas2d = new MergeSort2D(traceMergeSort(generateRandomArray(5)), [420, 150]);
             break;
+        case 'quick':
+            canvas2d = new QuickSort2D(traceQuickSort(generateRandomArray(5)), [420, 150]);
+            break;
     }
 
     canvas2d.run();

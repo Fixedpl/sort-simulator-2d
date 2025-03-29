@@ -120,3 +120,21 @@ function alpha1Arr(arr) {
     }
     return arr;
 }
+
+function mapIncrement(map, key) {
+    const value = map.get(key);
+
+    if(value != null) {
+        map.set(key, value + 1);
+    } else {
+        map.set(key, 1);
+    }
+}
+
+function mapDecrement(map, key) {
+    const value = map.get(key);
+
+    if (value != null) {
+        map.set(key, value - 1);
+    }
+}

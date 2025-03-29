@@ -7,17 +7,17 @@ class Array2D extends Object2D {
         this.cellGap = cellGap;
         this.ctx = ctx;
 
-        const CELL_WIDTH = 80;
+        this.cellWidth = 80;
 
-        this.cells = new ArrayCells2D(arr.length, CELL_WIDTH, [0, 0], this.cellGap, this.ctx);
-        this.cells.parent = this;
+        this.cells = new Array(arr.length);
+        this.initCells();
 
         this.elems = new Array(arr.length);
         for(let i = 0; i < arr.length; i++) {
             if(arr[i] != null) {
                 this.elems[i] = new Text2D(
                     arr[i].toString(), 
-                    this.cells.posAtCellCenterIdx(i), 
+                    this.posAtCellCenterIdx(i), 
                     COLORS_FACTORY.BLACK, 
                     ctx
                 );
@@ -26,12 +26,65 @@ class Array2D extends Object2D {
             
         }
 
-        this.height = CELL_WIDTH;
-        this.width = CELL_WIDTH * this.elems.length + this.cellGap * (this.elems.length - 1);
+        this.height = this.cellWidth;
+        this.width = this.calculateWidth();
     }
     
     get length() {
         return this.elems.length;
+    }
+
+    calculateWidth() {
+        return this.cellWidth * this.cells.length + this.cellGap * (Math.max(this.cells.length - 1, 0));
+    }
+
+    initCells() {
+        let shift = 0;
+
+        for (let i = 0; i < this.cells.length; i++) {
+
+            this.cells[i] = new ArrayCell2D(this.cellWidth, [shift, 0], COLORS_FACTORY.BLACK, this.ctx);
+            this.cells[i].parent = this;
+
+            shift += this.cellWidth + this.cellGap;
+        }
+    }
+
+    addCell() {
+        let addCellGap = 0;
+        if(this.cells.length != 0) {
+            addCellGap += this.cellGap;
+        }
+
+        const newCellPos = [this.width + addCellGap, 0];
+
+        const newCell = new ArrayCell2D(this.cellWidth, newCellPos, COLORS_FACTORY.BLACK, this.ctx);
+        newCell.parent = this;
+
+        this.cells.push(newCell);
+
+        this.elems.push(null);
+
+        this.width = this.calculateWidth();
+    }
+
+    addText(text) {
+        this.addCell();
+
+        const lastIdx = this.elems.length - 1;
+
+        const textPos = this.posAtCellCenterIdx(lastIdx);
+        const newText = new Text2D(text.toString(), textPos, COLORS_FACTORY.BLACK, this.ctx);
+        newText.parent = this;
+
+        this.elems[lastIdx] = newText;
+    }
+
+    pop() {
+        this.elems.pop();
+        this.cells.pop();
+
+        this.width = this.calculateWidth();
     }
 
     removeElemAtIdx(idx) {
@@ -59,27 +112,27 @@ class Array2D extends Object2D {
     }
 
     cellAtIdx(idx) {
-        return this.cells.elemAtIdx(idx);
+        return this.cells[idx];
     }
 
     posAtCellCenterIdx(idx) {
-        return this.cells.posAtCellCenterIdx(idx);
+        return this.cells[idx].center;
     }
 
     posAtGapCenterBeforeIdx(idx) {
-        return this.cells.posAtGapCenterBeforeIdx(idx);
+        return vec2Add(this.cells[idx].pos, [-this.cellGap / 2, -this.height / 2]);
     }
 
     posAtGapCenterAfterIdx(idx) {
-        return this.cells.posAtGapCenterAfterIdx(idx);
+        return vec2Add(this.cells[idx].pos, [this.cellWidth + (this.cellGap / 2), -this.height / 2]);
     }
 
     absPosAtGapCenterBeforeIdx(idx) {
-        return this.cells.absPosAtGapCenterBeforeIdx(idx);
+        return vec2Add(this.cells[idx].absPos, [-this.cellGap / 2, -this.cellWidth / 2]);
     }
 
     absPosAtGapCenterAfterIdx(idx) {
-        return this.cells.absPosAtGapCenterAfterIdx(idx);
+        return vec2Add(this.cells[idx].absPos, [this.cellWidth + (this.cellGap / 2), -this.height / 2]);
     }
 
     swap(idx1, idx2) {
@@ -113,7 +166,10 @@ class Array2D extends Object2D {
                 elem.draw();
             }
         }
-        this.cells.draw();
+        
+        for(let cell of this.cells) {
+            cell.draw();
+        }
     }
 
 }

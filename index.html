@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas</title>
+    <title>Sort Simulation</title>
 
     <style>
         body {
@@ -19,7 +19,7 @@
             align-items: center;
         }
 
-        .player-container {
+        .simulation-container {
             padding: 20px;
         }
 
@@ -28,7 +28,7 @@
 </head>
 <body>
 
-    <div class="player-container">
+    <div class="simulation-container">
         <button id="play" onclick="onPlay()">Play</button>
         <button id="pause" onclick="onPause()">Pause</button>
         <button id="prev" onclick="onPrev()">Prev</button>
@@ -38,7 +38,8 @@
             <option value="bubble">BUBBLE SORT</option>
             <option value="insertion">INSERTION SORT</option>
             <option value="selection">SELECTION SORT</option>
-            <option value="merge" selected>MERGE SORT</option>
+            <option value="merge">MERGE SORT</option>
+            <option value="quick" selected>QUICK SORT</option>
         </select>
     </div>
     
@@ -58,7 +59,7 @@
     <script src="rendering/canvas2d.js" defer></script>
     <script src="rendering/object2d.js" defer></script>
     <script src="rendering/text2d.js" defer></script>
-    <script src="rendering/array-cells2d.js" defer></script>
+    <script src="rendering/array-cell2d.js" defer></script>
     <script src="rendering/array2d.js" defer></script>
     <script src="rendering/array-splitter2d.js" defer></script>
     <script src="rendering/node2d.js" defer></script>
@@ -84,6 +85,11 @@
     <script src="merge-sort/merge-sort-operations-anim.js" defer></script>
     <script src="merge-sort/merge-sort-trace-processor.js" defer></script>
     <script src="merge-sort/merge-sort2d.js" defer></script>
+
+    <script src="quick-sort/quick-sort-trace.js" defer></script>
+    <script src="quick-sort/quick-sort-operations-anim.js" defer></script>
+    <script src="quick-sort/quick-sort-trace-processor.js" defer></script>
+    <script src="quick-sort/quick-sort2d.js" defer></script>
 
     <script src="script.js" defer></script>
 
