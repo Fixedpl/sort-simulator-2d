@@ -1,9 +1,9 @@
 
 class InsertionSort2D extends Canvas2D {
 
-    constructor(trace, pos) {
-        super(1200, 600, COLORS_FACTORY.LIGHTBLUE);
-        this.ctx.font = '80px Arial';
+    constructor(trace) {
+        super(1400, 900, COLORS_FACTORY.LIGHTBLUE);
+        this.ctx.font = '60px Arial';
 
         this.canvasScene = new CanvasScene(this.ctx);
 
@@ -13,8 +13,8 @@ class InsertionSort2D extends Canvas2D {
 
         this.simulation = new Simulation(this.operationSource);
         
-        const CELL_GAP = 40;
-        this.arr2d = new Array2D(trace.arr, pos, CELL_GAP, this.ctx);
+        const CELL_GAP = 20;
+        this.arr2d = new Array2D(trace.arr, [460, 250], CELL_GAP, this.ctx);
 
         this.canvasScene.drawables.set('array', this.arr2d);
     }

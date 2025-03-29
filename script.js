@@ -11,19 +11,19 @@ function setupChosenSort() {
 
     switch (sortType) {
         case 'bubble':
-            canvas2d = new BubbleSort2D(traceBubbleSort(generateRandomArray(6)), [120, 400]);
+            canvas2d = new BubbleSort2D(traceBubbleSort(generateRandomArray(5)));
             break;
         case 'insertion':
-            canvas2d = new InsertionSort2D(traceInsertionSort(generateRandomArray(6)), [120, 400]);
+            canvas2d = new InsertionSort2D(traceInsertionSort(generateRandomArray(5)));
             break;
         case 'selection':
-            canvas2d = new SelectionSort2D(traceSelectionSort(generateRandomArray(6)), [120, 400]);
+            canvas2d = new SelectionSort2D(traceSelectionSort(generateRandomArray(5)));
             break;
         case 'merge':
-            canvas2d = new MergeSort2D(traceMergeSort(generateRandomArray(5)), [420, 150]);
+            canvas2d = new MergeSort2D(traceMergeSort(generateRandomArray(5)));
             break;
         case 'quick':
-            canvas2d = new QuickSort2D(traceQuickSort(generateRandomArray(5)), [420, 150]);
+            canvas2d = new QuickSort2D(traceQuickSort(generateRandomArray(5)));
             break;
     }
 
@@ -55,4 +55,8 @@ function onNext() {
 
 function onGenerate() {
     this.setupChosenSort();
+}
+
+function onSortChange() {
+    this.onGenerate();
 }

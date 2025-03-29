@@ -50,6 +50,7 @@ class SMSplitAnim extends Operation {
             this.scene.animFactory.moveByVec(currentNode.right, [changeVec[0], changeVec[1]])
         ]));
 
+        anims.push(this.scene.animFactory.pause());
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }
@@ -298,6 +299,7 @@ class SMMergeAnim extends Operation {
 
         const anims = [];
         anims.push(this.scene.animFactory.showSync(mergeArray.cells));
+        anims.push(this.scene.animFactory.pause());
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback));
     }

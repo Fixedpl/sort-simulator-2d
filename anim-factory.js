@@ -3,7 +3,7 @@ class AnimFactory {
 
     constructor() {
         this.animTime = 300;
-        this.pauseTime = 10;
+        this.pauseTime = 300;
         this.tweenFunc = TWEENS.EASE_IN_OUT_QUAD;
     }
 

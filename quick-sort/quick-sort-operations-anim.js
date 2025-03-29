@@ -199,6 +199,7 @@ class SQPushLeftAnim extends Operation {
 
         anims.push(this.scene.animFactory.moveByVec(leftChild, leftNodeShift));
         anims.push(this.scene.animFactory.show(leftChildArr.cells[leftChildArrLastIdx]));
+        anims.push(this.scene.animFactory.pause());
         anims.push(this.scene.animFactory.show(leftChildArr.elems[leftChildArrLastIdx]));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback))
@@ -342,7 +343,9 @@ class SQPushRightAnim extends Operation {
             anims.push(this.scene.animFactory.moveByVec(nodeShift.node, nodeShift.pos));
         }
 
+        anims.push(this.scene.animFactory.pause());
         anims.push(this.scene.animFactory.show(rightChildArr.cells[rightChildArrLastIdx]));
+        anims.push(this.scene.animFactory.pause());
         anims.push(this.scene.animFactory.show(rightChildArr.elems[rightChildArrLastIdx]));
 
         this.scene.animPlayer.enqueue(new AnimationGroup(anims, onFinishCallback))
@@ -677,6 +680,7 @@ class SQMergeAnim extends Operation {
 
         anims.push(this.scene.animFactory.showSync(newArray.cells));
 
+        anims.push(this.scene.animFactory.pause());
         newArrayIdx = 0;
         if(leftChild != null) {
             const leftChildArr = leftChild.sorted;
@@ -686,9 +690,11 @@ class SQMergeAnim extends Operation {
             anims.push(this.scene.animFactory.showSync(newArray.elems.slice(0, newArrayIdx)));
         }
 
+        anims.push(this.scene.animFactory.pause());
         anims.push(this.scene.animFactory.showSync(newArray.elems.slice(newArrayIdx, newArrayIdx + pivotRepeats)));
         newArrayIdx += pivotRepeats;
 
+        anims.push(this.scene.animFactory.pause());
         if(rightChild != null) {
             anims.push(this.scene.animFactory.showSync(newArray.elems.slice(newArrayIdx)));
         }
