@@ -11,3 +11,6 @@ Rendering: Canvas API
 Hobby project written in 3 weeks to practice JS skills.
 
 ~4k javascript lines
+
+### How to start
+Download repo and open index.html in the browser
